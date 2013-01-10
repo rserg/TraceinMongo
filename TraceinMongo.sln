@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 2012 for Windows Desktop
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TraceinMongo", "TraceinMongo\TraceinMongo.csproj", "{96AAA8F4-C468-4C5B-AB17-4A1354D46F8D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{B98D7CB8-F6AA-4ED2-AB93-D8B340B7CCDA}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{96AAA8F4-C468-4C5B-AB17-4A1354D46F8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96AAA8F4-C468-4C5B-AB17-4A1354D46F8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96AAA8F4-C468-4C5B-AB17-4A1354D46F8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96AAA8F4-C468-4C5B-AB17-4A1354D46F8D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

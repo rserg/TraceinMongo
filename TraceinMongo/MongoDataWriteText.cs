@@ -1,0 +1,30 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Diagnostics;
+using System.IO;
+
+namespace TraceinMongo
+{
+    class MongoDataWriteText : IWriteProvider
+    {
+        private string filename;
+        public MongoDataWriteText(string filename) { this.filename = filename; }
+        public override void Write(TraceEventCache cache, string data, string message)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("Event log. Current log of Event " + DateTime.Now);
+            sb.Append("Data: " + data);
+            sb.Append("Message: " + message);
+            if (cache != null)
+            {
+                sb.Append("ProcessID " + cache.ProcessId);
+                sb.Append("ThreadID " + cache.ThreadId);
+                sb.Append("Callstack" + cache.Callstack);
+            }
+
+            File.AppendAllText(filename, sb.ToString(), Encoding.Default);
+        }
+    }
+}

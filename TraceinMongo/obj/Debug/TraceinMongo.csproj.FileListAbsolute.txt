@@ -1,0 +1,12 @@
+c:\users\сакура\documents\visual studio 2012\Projects\TraceinMongo\TraceinMongo\bin\Debug\TraceinMongo.exe.config
+c:\users\сакура\documents\visual studio 2012\Projects\TraceinMongo\TraceinMongo\obj\Debug\TraceinMongo.csprojResolveAssemblyReference.cache
+c:\users\сакура\documents\visual studio 2012\Projects\TraceinMongo\TraceinMongo\bin\Debug\TraceinMongo.exe
+c:\users\сакура\documents\visual studio 2012\Projects\TraceinMongo\TraceinMongo\bin\Debug\TraceinMongo.pdb
+c:\users\сакура\documents\visual studio 2012\Projects\TraceinMongo\TraceinMongo\bin\Debug\MongoDB.Bson.dll
+c:\users\сакура\documents\visual studio 2012\Projects\TraceinMongo\TraceinMongo\bin\Debug\MongoDB.Driver.dll
+c:\users\сакура\documents\visual studio 2012\Projects\TraceinMongo\TraceinMongo\bin\Debug\MongoDB.Bson.pdb
+c:\users\сакура\documents\visual studio 2012\Projects\TraceinMongo\TraceinMongo\bin\Debug\MongoDB.Bson.xml
+c:\users\сакура\documents\visual studio 2012\Projects\TraceinMongo\TraceinMongo\bin\Debug\MongoDB.Driver.pdb
+c:\users\сакура\documents\visual studio 2012\Projects\TraceinMongo\TraceinMongo\bin\Debug\MongoDB.Driver.xml
+c:\users\сакура\documents\visual studio 2012\Projects\TraceinMongo\TraceinMongo\obj\Debug\TraceinMongo.exe
+c:\users\сакура\documents\visual studio 2012\Projects\TraceinMongo\TraceinMongo\obj\Debug\TraceinMongo.pdb
