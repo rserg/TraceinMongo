@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using System.Text;
@@ -73,50 +72,47 @@ namespace TraceinMongo
         public class MongoListener : TraceListener
         {
             private ConsoleTraceListener consoleTracer = new ConsoleTraceListener();
-            //private Object filelock = new Object();
             private TraceSource tracesrs;
             private BsonDocument bson = new BsonDocument();
             private string filename;
             Listeners outputfiles;
-            //Текущая информация о бд
-            MongoData mongodata;
+            //Current Info about DB
+            private static MongoData mongodata;
 
-            //Возможен лок
             private object thislock = new object();
 
-            MongoCollection mongoLogCollection;
+            MongoCollection mongoLogCollection = null;
 
             List<string> info = new List<string>();
 
-            List<Log> log = new List<Log>();
+            private static List<Log> log = new List<Log>();
 
             //Включить логгирование
             private bool logging = true;
 
             //private XDocument xdoc;
             //name - имя для бд
-            public MongoListener(string name, Listeners outputfiles)
+            public MongoListener(string name, Listeners outputfiles, MongoCollection coll)
             {
-                MongoListenerLoad(name, outputfiles);
+                mongoLogCollection = coll;
             }
 
             //Дефолтный згрузчик
             public MongoListener(string name)
             {
-                MongoListenerLoad(name, new Listeners { xml = name });
+                filename = name;
             }
 
-            private void MongoListenerLoad(string name, Listeners outputfiles)
+            public static MongoListener MongoListenerLoad(string name, Listeners outputfiles)
             {
-                filename = name;
-                this.outputfiles = outputfiles;
                 mongodata = new MongoData(name);
+                MongoCollection collection = null;
                 try
                 {
                     MongoServer server = MongoServer.Create();
                     server.Connect();
                     var db = server.GetDatabase(name);
-                    mongoLogCollection = db.GetCollection<BsonDocument>(name);
+                    collection = db.GetCollection<BsonDocument>(name);
                 }
                 catch (MongoAuthenticationException)
                 {
@@ -130,15 +126,15 @@ namespace TraceinMongo
                 catch (MongoConnectionException)
                 {
                     Console.WriteLine("Error connection in mongodb. But program still continue");
+                    Environment.Exit(1);
                 }
                 catch (Exception)
                 {
                     Console.WriteLine("Unknown Exception");
+                    Environment.Exit(1);
                 }
-                finally
-                {
 
-                }
+                return new MongoListener(name, outputfiles,collection);
             }
 
 
@@ -216,13 +212,11 @@ namespace TraceinMongo
 
             public delegate TResult Func<T1, T2, TResult>(string name);
             //Главная функция распределения
-            public string GetAllItems(string message, string category,
+            public void GetAllItems(string message, string category,
                 TraceEventCache tracecache,
                 IWriteProvider wr)
             {
-                //var rrr = construct(name);
                 wr.Write(tracecache, category, message);
-                return "SSS";
             }
 
             //Тестовая реализация интерфейса
@@ -294,7 +288,7 @@ namespace TraceinMongo
             }
 
             #endregion
-            //Вывод сообщения в случае ошибки
+            //Show this message in the error case
             public void TroubleXML(string message)
             {
                 try
@@ -315,7 +309,7 @@ namespace TraceinMongo
             #endregion
 
 
-            //Изменить имя логгера
+            //Change the logger name
             void changeLogName(string newname)
             {
                 this.Name = newname;
@@ -353,19 +347,6 @@ namespace TraceinMongo
             #endregion
         }
 
-        public void InfoAboutSystem()
-        {
-            Trace.WriteLine("Start tracing");
-            Trace.WriteLine(Environment.CurrentDirectory);
-            Trace.WriteLine(Environment.OSVersion);
-            Trace.WriteLine(Environment.SystemPageSize);
-            Trace.Unindent();
-
-            //Func<int, int,int> los = (x, y) => x + y;
-            //Func<int,int,int>add = (int x, int y) => x + y;
-
-        }
-
         delegate string MongoDelegate();
 
         //Получить информацию из базы
@@ -380,17 +361,12 @@ namespace TraceinMongo
         {
 
             //Переделать, чтобы инфа не затералась
-            MongoListener xml = new MongoListener("pong",
+            MongoListener xml = MongoListener.MongoListenerLoad("pong",
                 new Listeners { text = "pong.txt" });
 
             Trace.Listeners.Add(xml);
             Trace.WriteLine("test write");
             Trace.WriteLine("Polk");
-            //Trace.WriteLine("Porra", "cat");
-            //Trace.WriteLine("Error", "message");
-            //Trace.WriteLine("Piza", "porra");
-            //Trace.WriteLineIf(true, "zoom");
-            //Trace.WriteIf(true, "Value", "Write");
             Trace.Flush();
             xml.Stop();
 

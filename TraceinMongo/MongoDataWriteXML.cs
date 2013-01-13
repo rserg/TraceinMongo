@@ -27,7 +27,6 @@ namespace TraceinMongo
         //Загрузка всего, что есть
         private dynamic LoadCurrentData(string path)
         {
-            Console.WriteLine(path);
             if (File.Exists(path))
                 return XDocument.Load(new FileStream(path, FileMode.Append, FileAccess.Write, FileShare.Read));
             else
