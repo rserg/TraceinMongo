@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{96AAA8F4-C468-4C5B-AB17-4A1354D46F8D}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TraceinMongo</RootNamespace>
     <AssemblyName>TraceinMongo</AssemblyName>
@@ -31,6 +31,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="MongoDB.Bson">
       <HintPath>..\..\..\..\..\..\..\Sergey\CSharpmongodriver\MongoDB.Bson.dll</HintPath>
@@ -51,6 +54,7 @@
     <Compile Include="MongoData.cs" />
     <Compile Include="MongoDataWriteText.cs" />
     <Compile Include="MongoDataWriteXML.cs" />
+    <Compile Include="MongoWrite.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

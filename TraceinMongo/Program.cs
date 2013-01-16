@@ -77,7 +77,7 @@ namespace TraceinMongo
             private string filename;
             Listeners outputfiles;
             //Current Info about DB
-            private static MongoData mongodata;
+            private static MongoData mongodata=null;
 
             private object thislock = new object();
 
@@ -352,9 +352,9 @@ namespace TraceinMongo
         //Получить информацию из базы
         public void testmongo()
         {
-            MongoInfo info = new MongoInfo();
-            info.ReadFromMongo("pong");
-            info.Show("pong");
+            MongoInfo info = new MongoInfo("pong");
+            info.ReadFromMongo();
+            info.Show();
         }
 
         public static void Main(string[] args)
@@ -362,43 +362,49 @@ namespace TraceinMongo
 
             //Переделать, чтобы инфа не затералась
             MongoListener xml = MongoListener.MongoListenerLoad("pong",
-                new Listeners { text = "pong.txt" });
+                new Listeners { text = "pong.txt", xml="pong.xml" });
 
             Trace.Listeners.Add(xml);
             Trace.WriteLine("test write");
             Trace.WriteLine("Polk");
             Trace.Flush();
             xml.Stop();
+            Trace.WriteLine("Not stored");
 
-            MongoInfo info = new MongoInfo();
-            info.ClearBase("pong");
-            info.ReadFromMongo("pong");
-            info.Show("pong");
+            MongoInfo info = new MongoInfo("pong");
+            info.ReadFromMongo();
+            info.Show();
         }
     }
 
-    //Класс для доступа к базе
+    //Access for mongo
     class MongoInfo
     {
-        public MongoInfo() { }
-        public void ReadFromMongo(string _dbname)
+        private string dbname;
+        private MongoData data;
+        public MongoInfo(string dbname)
         {
-            Func<MongoData, Func<string, int>> curss =
+            this.dbname = dbname;
+            data = new MongoData(dbname);
+        }
+        public MongoCollection<BsonDocument> ReadFromMongo()
+        {
+            Func<MongoData, Func<string, 
+                MongoCollection<BsonDocument>>> curss =
                 delegate(MongoData data)
                 {
                     return delegate(string dbname)
                     {
-                        Console.WriteLine(data.GetDataFromMongo(dbname).Database);
-                        return 5;
+                        return data.GetDataFromMongo(dbname);
                     };
                 };
 
 
-            curss(new MongoData(_dbname))(_dbname);
+            return curss(new MongoData(this.dbname))(this.dbname);
         }
 
 
-        public void Show(string dbname)
+        public void Show()
         {
             MongoData data = new MongoData(dbname);
             foreach (var tt in data.GetDataFromMongo(dbname).FindAll())
@@ -407,10 +413,31 @@ namespace TraceinMongo
             }
         }
 
+        public IEnumerable<BsonDocument> Find(string key)
+        {
+            var e = from store in data.GetDataFromMongo(dbname).FindAll()
+                    where store["Message"].AsString == key 
+                    select store;
+
+            return e;
+                    
+        }
+
         public void ClearBase(string dbname)
         {
             MongoData data = new MongoData(dbname);
             data.GetDataFromMongo(dbname).RemoveAll();
+        }
+
+        public long Size()
+        {
+            MongoData data = new MongoData(dbname);
+            return data.GetDataFromMongo(dbname).Count();
+        }
+
+        public void ChangeDBName(string newdbname)
+        {
+            this.dbname = dbname;
         }
     }
 }
