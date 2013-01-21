@@ -54,7 +54,6 @@
     <Compile Include="MongoData.cs" />
     <Compile Include="MongoDataWriteText.cs" />
     <Compile Include="MongoDataWriteXML.cs" />
-    <Compile Include="MongoWrite.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

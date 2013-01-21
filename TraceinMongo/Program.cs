@@ -48,7 +48,7 @@ namespace TraceinMongo
         public string catingo { get; set; }
     }
 
-    //Лог программы
+    //Current Log
 
     struct Log
     {
@@ -77,7 +77,7 @@ namespace TraceinMongo
             private string filename;
             Listeners outputfiles;
             //Current Info about DB
-            private static MongoData mongodata=null;
+            private static MongoData mongodata;
 
             private object thislock = new object();
 
@@ -116,47 +116,31 @@ namespace TraceinMongo
                 }
                 catch (MongoAuthenticationException)
                 {
-                    string message = "Incorrect autorizaion in MongoDB. Will continue without logging";
-                    log.Add(new Log
-                    {
-                        message = message,
-                        time = DateTime.Now
-                    });
+                    ExceptionCase("MongoAuthenticationException", false);
                 }
                 catch (MongoConnectionException)
                 {
-                    Console.WriteLine("Error connection in mongodb. But program still continue");
-                    Environment.Exit(1);
+                    ExceptionCase("Trouble with Connection to MongoDB", false);
                 }
                 catch (Exception)
                 {
-                    Console.WriteLine("Unknown Exception");
-                    Environment.Exit(1);
+                    ExceptionCase("Unknown Exception", false);
                 }
 
                 return new MongoListener(name, outputfiles,collection);
             }
 
 
+            private static void ExceptionCase(string message, bool exit)
+            {
+                Console.WriteLine(message);
+                mongodata = null;
+                if (exit) Environment.Exit(0);
+            }
+
 
             #region Write methods
-            public void Error(string name)
-            {
-                WriteLine(name);
-
-            }
-
-            public void Start(string name)
-            {
-                WriteLine(name);
-
-            }
-
-            public void Critical(string name)
-            {
-                WriteLine(name);
-            }
-
+            
 
             public void Dangerus(string name)
             {
@@ -199,7 +183,6 @@ namespace TraceinMongo
                 if (category == null) category = "None";
                 if (logging && message != null)
                 {
-                    //WriteFactory<WriteXML>(filename);
                     if (outputfiles.xml != null)
                         this.WriteXML(null, category, message);
                     if (outputfiles.html != null)
@@ -280,6 +263,7 @@ namespace TraceinMongo
             #region Text area
             public void WriteText(TraceEventCache trace, string category, string message)
             {
+                Console.WriteLine("THIS");
                 StringBuilder sb = new StringBuilder();
                 sb.Append("Category: " + category);
                 sb.Append("Message: " + message);
@@ -349,14 +333,6 @@ namespace TraceinMongo
 
         delegate string MongoDelegate();
 
-        //Получить информацию из базы
-        public void testmongo()
-        {
-            MongoInfo info = new MongoInfo("pong");
-            info.ReadFromMongo();
-            info.Show();
-        }
-
         public static void Main(string[] args)
         {
 
@@ -371,9 +347,10 @@ namespace TraceinMongo
             xml.Stop();
             Trace.WriteLine("Not stored");
 
-            MongoInfo info = new MongoInfo("pong");
-            info.ReadFromMongo();
-            info.Show();
+            MongoInfo info = MongoInfo.Load("pong");
+            Console.WriteLine(info.ServersCount());
+            //info.ReadFromMongo();
+           // info.Show();
         }
     }
 
@@ -382,10 +359,17 @@ namespace TraceinMongo
     {
         private string dbname;
         private MongoData data;
-        public MongoInfo(string dbname)
+        private int servercount;
+        public MongoInfo(string dbname, MongoData data)
         {
             this.dbname = dbname;
-            data = new MongoData(dbname);
+            this.data = data;
+            this.servercount = data.GetServerCount();
+        }
+
+        public static MongoInfo Load(string dbname)
+        {
+            return new MongoInfo(dbname, new MongoData(dbname));
         }
         public MongoCollection<BsonDocument> ReadFromMongo()
         {
@@ -411,6 +395,11 @@ namespace TraceinMongo
             {
                 Console.WriteLine(tt["Message"].AsString);
             }
+        }
+
+        public int ServersCount()
+        {
+            return this.servercount;
         }
 
         public IEnumerable<BsonDocument> Find(string key)

@@ -8,12 +8,20 @@ using MongoDB.Bson;
 
 namespace TraceinMongo
 {
-    class MongoData
+    class MongoData : IWriteProvider
     {
         private string dbname;
         public MongoData(string databasename)
         {
             dbname = databasename;
+        }
+
+        public override void Write(string collection, string message)
+        {
+            if (MongoServer.GetAllServers().Count() > 0)
+            {
+                GetDataFromMongo(collection);
+            }
         }
 
         //Функциоональные структуры с 81
@@ -62,6 +70,11 @@ namespace TraceinMongo
                 {"Author", System.Environment.MachineName},
                 {"Error", error_message}
             });
+        }
+
+        public int GetServerCount()
+        {
+            return MongoServer.ServerCount;
         }
     }
 }

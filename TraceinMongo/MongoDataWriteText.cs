@@ -13,6 +13,7 @@ namespace TraceinMongo
         public MongoDataWriteText(string filename) { this.filename = filename; }
         public override void Write(TraceEventCache cache, string data, string message)
         {
+            Console.WriteLine("INSIDE: ");
             StringBuilder sb = new StringBuilder();
             sb.Append("Event log. Current log of Event " + DateTime.Now);
             sb.Append("Data: " + data);
