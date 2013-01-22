@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AMongoListener.cs" />
     <Compile Include="IOStats.cs" />
     <Compile Include="MongoData.cs" />
     <Compile Include="MongoDataWriteText.cs" />

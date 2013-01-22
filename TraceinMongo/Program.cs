@@ -69,7 +69,7 @@ namespace TraceinMongo
         enum MOD { XML, JSON };
 
 
-        public class MongoListener : TraceListener
+        public class MongoListener : AMongoListener
         {
             private ConsoleTraceListener consoleTracer = new ConsoleTraceListener();
             private TraceSource tracesrs;
@@ -130,6 +130,11 @@ namespace TraceinMongo
                 return new MongoListener(name, outputfiles,collection);
             }
 
+            public static MongoListener MongoListenerLoad(string name)
+            {
+                return new MongoListener(name);
+            }
+
 
             private static void ExceptionCase(string message, bool exit)
             {
@@ -167,8 +172,7 @@ namespace TraceinMongo
 
             public override void WriteLine(string o)
             {
-
-                this.BuildWrite(null, o);
+                this.BuildWrite("None", o);
             }
 
             public override void Write(string message, string category)
@@ -177,10 +181,8 @@ namespace TraceinMongo
             }
 
 
-            //Главный класс, который распределяет все Дальнейшие функции
             private void BuildWrite(string category, string message)
             {
-                if (category == null) category = "None";
                 if (logging && message != null)
                 {
                     if (outputfiles.xml != null)
@@ -189,7 +191,6 @@ namespace TraceinMongo
                         this.WriteHTML(null, category, message);
                     if (outputfiles.text != null)
                         this.WriteText(null, category, message);
-
                 }
             }
 
@@ -207,6 +208,10 @@ namespace TraceinMongo
 
             private void WriteXML(TraceEventCache tracecache, string message, string category)
             {
+               #if DEBUG 
+                Console.WriteLine("XML");
+                #endif
+
                 GetAllItems(message, category, tracecache,
                   new MongoDataWriteXML(filename));
                 mongodata.WriteDatainMongo(mongoLogCollection, new WriteInfo
@@ -214,7 +219,10 @@ namespace TraceinMongo
                     category = category,
                     message = message
                 });
+
+                
             }
+
 
             #region HTML area
             private void WriteHTML(TraceEventCache trace, string category, string message)
@@ -336,21 +344,21 @@ namespace TraceinMongo
         public static void Main(string[] args)
         {
 
-            //Переделать, чтобы инфа не затералась
             MongoListener xml = MongoListener.MongoListenerLoad("pong",
                 new Listeners { text = "pong.txt", xml="pong.xml" });
 
+            MongoListener xml2 = MongoListener.MongoListenerLoad("pong");
+
             Trace.Listeners.Add(xml);
-            Trace.WriteLine("test write");
-            Trace.WriteLine("Polk");
+            Trace.WriteLine("First");
+            Trace.WriteLine("Next");
+            Trace.WriteLine("Last");
             Trace.Flush();
             xml.Stop();
             Trace.WriteLine("Not stored");
 
             MongoInfo info = MongoInfo.Load("pong");
             Console.WriteLine(info.ServersCount());
-            //info.ReadFromMongo();
-           // info.Show();
         }
     }
 
@@ -426,7 +434,7 @@ namespace TraceinMongo
 
         public void ChangeDBName(string newdbname)
         {
-            this.dbname = dbname;
+            this.dbname = newdbname;
         }
     }
 }
