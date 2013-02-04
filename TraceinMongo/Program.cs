@@ -6,25 +6,22 @@ using System.Text;
 using System.Diagnostics;
 using System.IO;
 using System.Web;
-using Microsoft.Win32;
 using System.Xml;
 using System.Security.Permissions;
 using System.Runtime.Serialization;
-using MongoDB.Driver;
-using MongoDB.Bson;
 using System.Reflection;
 
-using System.Threading.Tasks;
+using MongoDB.Driver;
+using MongoDB.Bson;
+using Microsoft.VisualStudio.TestTools.UITesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace TraceinMongo
 {
-    interface WriteStream
-    {
-        void Write(string data, string message);
-    }
 
-    abstract class IWriteProvider : WriteStream
+    abstract class IWriteProvider : IWriteInfo
     {
+
         //private string filename;
         //public WriteProvider(string filename) { this.filename = filename; }
         public virtual void Write(string data, string message) { }
@@ -95,6 +92,7 @@ namespace TraceinMongo
             public MongoListener(string name, Listeners outputfiles, MongoCollection coll)
             {
                 mongoLogCollection = coll;
+                this.outputfiles = outputfiles;
             }
 
             //Дефолтный згрузчик
@@ -138,7 +136,6 @@ namespace TraceinMongo
 
             private static void ExceptionCase(string message, bool exit)
             {
-                Console.WriteLine(message);
                 mongodata = null;
                 if (exit) Environment.Exit(0);
             }
@@ -185,12 +182,14 @@ namespace TraceinMongo
             {
                 if (logging && message != null)
                 {
+                    Console.WriteLine(outputfiles.text != null);
                     if (outputfiles.xml != null)
-                        this.WriteXML(null, category, message);
+                        new MongoDataWriteXML(outputfiles.xml).Write(category, message);
                     if (outputfiles.html != null)
                         this.WriteHTML(null, category, message);
                     if (outputfiles.text != null)
-                        this.WriteText(null, category, message);
+                        new MongoDataWriteText(outputfiles.text).Write(category, message);
+
                 }
             }
 
@@ -271,7 +270,6 @@ namespace TraceinMongo
             #region Text area
             public void WriteText(TraceEventCache trace, string category, string message)
             {
-                Console.WriteLine("THIS");
                 StringBuilder sb = new StringBuilder();
                 sb.Append("Category: " + category);
                 sb.Append("Message: " + message);
@@ -341,14 +339,10 @@ namespace TraceinMongo
 
         delegate string MongoDelegate();
 
-        public static void Main(string[] args)
+       [TestMethod()]
+        void RunListenerTest()
         {
-
-            MongoListener xml = MongoListener.MongoListenerLoad("pong",
-                new Listeners { text = "pong.txt", xml="pong.xml" });
-
-            MongoListener xml2 = MongoListener.MongoListenerLoad("pong");
-
+            MongoListener xml = MongoListener.MongoListenerLoad("Another", new Listeners { text = "output2.txt" });
             Trace.Listeners.Add(xml);
             Trace.WriteLine("First");
             Trace.WriteLine("Next");
@@ -358,83 +352,13 @@ namespace TraceinMongo
             Trace.WriteLine("Not stored");
 
             MongoInfo info = MongoInfo.Load("pong");
-            Console.WriteLine(info.ServersCount());
+            Console.WriteLine(info.ReadFromMongo());
+        }
+        public static void Main(string[] args)
+        {
+
+         
         }
     }
 
-    //Access for mongo
-    class MongoInfo
-    {
-        private string dbname;
-        private MongoData data;
-        private int servercount;
-        public MongoInfo(string dbname, MongoData data)
-        {
-            this.dbname = dbname;
-            this.data = data;
-            this.servercount = data.GetServerCount();
-        }
-
-        public static MongoInfo Load(string dbname)
-        {
-            return new MongoInfo(dbname, new MongoData(dbname));
-        }
-        public MongoCollection<BsonDocument> ReadFromMongo()
-        {
-            Func<MongoData, Func<string, 
-                MongoCollection<BsonDocument>>> curss =
-                delegate(MongoData data)
-                {
-                    return delegate(string dbname)
-                    {
-                        return data.GetDataFromMongo(dbname);
-                    };
-                };
-
-
-            return curss(new MongoData(this.dbname))(this.dbname);
-        }
-
-
-        public void Show()
-        {
-            MongoData data = new MongoData(dbname);
-            foreach (var tt in data.GetDataFromMongo(dbname).FindAll())
-            {
-                Console.WriteLine(tt["Message"].AsString);
-            }
-        }
-
-        public int ServersCount()
-        {
-            return this.servercount;
-        }
-
-        public IEnumerable<BsonDocument> Find(string key)
-        {
-            var e = from store in data.GetDataFromMongo(dbname).FindAll()
-                    where store["Message"].AsString == key 
-                    select store;
-
-            return e;
-                    
-        }
-
-        public void ClearBase(string dbname)
-        {
-            MongoData data = new MongoData(dbname);
-            data.GetDataFromMongo(dbname).RemoveAll();
-        }
-
-        public long Size()
-        {
-            MongoData data = new MongoData(dbname);
-            return data.GetDataFromMongo(dbname).Count();
-        }
-
-        public void ChangeDBName(string newdbname)
-        {
-            this.dbname = newdbname;
-        }
-    }
 }

@@ -16,6 +16,7 @@ namespace TraceinMongo
             dbname = databasename;
         }
 
+
         public override void Write(string collection, string message)
         {
             if (MongoServer.GetAllServers().Count() > 0)

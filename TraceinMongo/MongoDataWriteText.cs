@@ -9,11 +9,21 @@ namespace TraceinMongo
 {
     class MongoDataWriteText : IWriteProvider
     {
+
         private string filename;
         public MongoDataWriteText(string filename) { this.filename = filename; }
         public override void Write(TraceEventCache cache, string data, string message)
         {
-            Console.WriteLine("INSIDE: ");
+            this.CompleteWrite(cache, data, message);
+        }
+
+        public override void Write(string data, string message)
+        {
+            this.CompleteWrite(null,data, message);
+        }
+
+        private void CompleteWrite(TraceEventCache cache, string data, string message)
+        {
             StringBuilder sb = new StringBuilder();
             sb.Append("Event log. Current log of Event " + DateTime.Now);
             sb.Append("Data: " + data);
@@ -25,7 +35,16 @@ namespace TraceinMongo
                 sb.Append("Callstack" + cache.Callstack);
             }
 
-            File.AppendAllText(filename, sb.ToString(), Encoding.Default);
+            this.Save(filename, sb);
+        }
+
+        private void Save(string path, StringBuilder sb)
+        {
+            using (var stream = new StreamWriter(path, true, Encoding.Default))
+            {
+                stream.WriteLine(sb.ToString());
+            }
+
         }
     }
 }

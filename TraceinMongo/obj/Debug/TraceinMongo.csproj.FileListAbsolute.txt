@@ -10,3 +10,9 @@ c:\users\сакура\documents\visual studio 2012\Projects\TraceinMongo\Tracein
 C:\Users\Сакура\documents\visual studio 2012\Projects\TraceinMongo\TraceinMongo\bin\Debug\TraceinMongo.dll.config
 C:\Users\Сакура\documents\visual studio 2012\Projects\TraceinMongo\TraceinMongo\bin\Debug\TraceinMongo.dll
 C:\Users\Сакура\documents\visual studio 2012\Projects\TraceinMongo\TraceinMongo\obj\Debug\TraceinMongo.dll
+C:\Users\Сакура\Documents\Visual Studio 2012\Projects\TraceinMongo\TraceinMongo\bin\Debug\Microsoft.VisualStudio.TestTools.UITest.Common.dll
+C:\Users\Сакура\Documents\Visual Studio 2012\Projects\TraceinMongo\TraceinMongo\bin\Debug\Microsoft.VisualStudio.TestTools.UITest.Extension.dll
+C:\Users\Сакура\Documents\Visual Studio 2012\Projects\TraceinMongo\TraceinMongo\bin\Debug\Microsoft.VisualStudio.TestTools.UITesting.dll
+C:\Users\Сакура\Documents\Visual Studio 2012\Projects\TraceinMongo\TraceinMongo\bin\Debug\Microsoft.VisualStudio.TestTools.UITest.Common.xml
+C:\Users\Сакура\Documents\Visual Studio 2012\Projects\TraceinMongo\TraceinMongo\bin\Debug\Microsoft.VisualStudio.TestTools.UITest.Extension.xml
+C:\Users\Сакура\Documents\Visual Studio 2012\Projects\TraceinMongo\TraceinMongo\bin\Debug\Microsoft.VisualStudio.TestTools.UITesting.xml

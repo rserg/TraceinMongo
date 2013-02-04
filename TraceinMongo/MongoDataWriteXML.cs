@@ -35,6 +35,7 @@ namespace TraceinMongo
         //Записать информаию о процессах
         public override void Write(TraceEventCache tracecache, string data, string message)
         {
+
             //Расширенный трейс
             try
             {
