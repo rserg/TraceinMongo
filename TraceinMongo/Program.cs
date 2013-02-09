@@ -21,9 +21,6 @@ namespace TraceinMongo
 
     abstract class IWriteProvider : IWriteInfo
     {
-
-        //private string filename;
-        //public WriteProvider(string filename) { this.filename = filename; }
         public virtual void Write(string data, string message) { }
         public virtual void Write(TraceEventCache cache, string data, string message) { }
     }
@@ -72,6 +69,7 @@ namespace TraceinMongo
             private TraceSource tracesrs;
             private BsonDocument bson = new BsonDocument();
             private string filename;
+            private string dbname;
             Listeners outputfiles;
             //Current Info about DB
             private static MongoData mongodata;
@@ -84,7 +82,7 @@ namespace TraceinMongo
 
             private static List<Log> log = new List<Log>();
 
-            //Включить логгирование
+            //Enable logging
             private bool logging = true;
 
             //private XDocument xdoc;
@@ -93,12 +91,13 @@ namespace TraceinMongo
             {
                 mongoLogCollection = coll;
                 this.outputfiles = outputfiles;
+                this.dbname = name;
             }
 
-            //Дефолтный згрузчик
             public MongoListener(string name)
             {
                 filename = name;
+                this.dbname = name;
             }
 
             public static MongoListener MongoListenerLoad(string name, Listeners outputfiles)
@@ -177,12 +176,15 @@ namespace TraceinMongo
                 this.BuildWrite(category, message);
             }
 
+            public override void Write(object o, string category)
+            {
+                
+            }
 
             private void BuildWrite(string category, string message)
             {
                 if (logging && message != null)
                 {
-                    Console.WriteLine(outputfiles.text != null);
                     if (outputfiles.xml != null)
                         new MongoDataWriteXML(outputfiles.xml).Write(category, message);
                     if (outputfiles.html != null)
@@ -302,7 +304,12 @@ namespace TraceinMongo
             //Change the logger name
             void changeLogName(string newname)
             {
-                this.Name = newname;
+                this.dbname= newname;
+            }
+
+            public string getName()
+            {
+                return this.Name;
             }
 
 
@@ -340,7 +347,7 @@ namespace TraceinMongo
         delegate string MongoDelegate();
 
        [TestMethod()]
-        void RunListenerTest()
+        public void RunListenerTest()
         {
             MongoListener xml = MongoListener.MongoListenerLoad("Another", new Listeners { text = "output2.txt" });
             Trace.Listeners.Add(xml);
@@ -354,6 +361,29 @@ namespace TraceinMongo
             MongoInfo info = MongoInfo.Load("pong");
             Console.WriteLine(info.ReadFromMongo());
         }
+
+       [TestMethod()]
+       public void CrushTest()
+       {
+           MongoListener listener = MongoListener.MongoListenerLoad("AnotherBase");
+           Trace.WriteLine("CurrentEvent");
+           Trace.WriteLine("NextEvent");
+           Trace.WriteLine("LastEvent");
+           Trace.WriteLineIf(true, "AA");
+       }
+
+       [TestMethod()]
+       void TestListenerFail()
+       {
+           MongoListener xml = MongoListener.MongoListenerLoad("Another", new Listeners { text = "output2.txt" });
+       }
+
+       [TestMethod()]
+       public void MongoGetTest()
+       {
+           MongoListener xml = MongoListener.MongoListenerLoad("AnotherBase");
+           MongoData data = new MongoData("AnotherBase");
+       }
         public static void Main(string[] args)
         {
 

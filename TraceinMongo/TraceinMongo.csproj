@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AMongoListener.cs" />
+    <Compile Include="CheckParameters.cs" />
     <Compile Include="IOStats.cs" />
     <Compile Include="IWriteInfo.cs" />
     <Compile Include="MongoData.cs" />
